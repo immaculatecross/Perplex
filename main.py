@@ -4,9 +4,9 @@ from Crypto.Hash import SHA256
 
 # input data
 
-name="Paul Gabriel Lundwall"
-masterkey="sciwfpents.pynfuse"
-website="madafaka.com"
+name= raw_input ('Enter your full name: ')
+masterkey= raw_input ('Enter your master key: ')
+website= raw_input ('Enter the name of the sevice you want to store the password of: ')
 
 
 # hash input data
@@ -37,6 +37,7 @@ while len(masterkey)<32:
 
 
 # encrypt plain with key and a constant IV ("thisisaninitvect"), then hash ciph1
+
 
 obj1=AES.new(masterkey, AES.MODE_CBC, 'thisisaninitvect')
 ciph1 = obj1.encrypt(name)
@@ -95,8 +96,6 @@ def int2base(x,b,alphabet='0123456789abcdefghijklmnopqrstuvwxyz'):
 
 ciph2 = int2base(ciph2,62,alphabet='0123456789abcdefghijklmnopqrstuvwxyz')
 
-print ciph2
-
 
 # check to see if cipher2's sequences contains at least one number, one upper-case letter, and one lower-case letter, and choose the correct interval
 
@@ -124,7 +123,6 @@ def Works (string, constant):
 for i in range (0,6):
     if Works (ciph2,i):
         c = i*12
-        print i
         break
     elif i == 5:
         c=0
