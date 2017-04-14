@@ -23,10 +23,6 @@ m = SHA256.new()
 m.update(website)
 website=m.hexdigest()
 
-print name
-print masterkey
-print website
-
 
 # fix input data hash length (multiple of 16 for plaintext, 32 for key), by adding "0" or truncating
 
@@ -38,9 +34,6 @@ if len(masterkey)>31:
 
 while len(masterkey)<32:
     masterkey+="0"
-
-print name
-print masterkey
 
 
 # encrypt plain with key and a constant IV ("thisisaninitvect"), then hash ciph1
@@ -64,9 +57,6 @@ if len(ciph1)>31:
 while len(ciph1)<32:
     ciph1+="0"
 
-print website
-print ciph1
-
 
 # encrypt website with ciph1 and a constant IV ("thisisaninitvect"), then hash ciph2
 
@@ -76,8 +66,6 @@ ciph2=obj.encrypt(website)
 m = SHA256.new()
 m.update(ciph2)
 ciph2=m.hexdigest()
-
-print ciph2
 
 
 # convert ciph2 from hexadecimal to decimal, then from decimal to base62 (def from Stack Overflow, credit to Mark Borgerding)
@@ -106,7 +94,10 @@ def int2base(x,b,alphabet='0123456789abcdefghijklmnopqrstuvwxyz'):
     return rets
 
 ciph2 = int2base(ciph2,62,alphabet='0123456789abcdefghijklmnopqrstuvwxyz')
-print ciph2
+
+
+# use the following password format: xxx-xxx-xxx-xxx, where x is a base 62 caracter, from the start of ciph2
 
 password = ciph2[0:3]+"-"+ciph2[3:6]+"-"+ciph2[6:9]+"-"+ciph2[9:12]
-print(password)
+
+print password
