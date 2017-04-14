@@ -4,18 +4,7 @@ from Crypto.Hash import SHA256
 plain="username"
 key="password"
 website="site.com"
-
-m1 = SHA256.new()
-m1.update(plain)
-plain=m1.hexdigest()
-
-m2 = SHA256.new()
-m2.update(key)
-key=m2.hexdigest()
-
-m3 = SHA256.new()
-m3.update(website)
-website=m3.hexdigest()
+root_key = "00000"
 
 for i in range(0,2):
 
@@ -27,8 +16,25 @@ for i in range(0,2):
     while len(key)<32:
         key+="0"
 
-    obj=AES.new(key, AES.MODE_CBC, 'thisisaninitvect')
-    ciph1=obj.encrypt(plain)
+    obj1=AES.new(key, AES.MODE_CBC, 'thisisaninitvect')
+    ciph = obj1.encrypt(plain)
+
+    if i == 0:
+        root_key = ciph
+
+
+for i in range(0,2):
+
+    while len(website)%16 != 0:
+        website+="0"
+
+    if len(root_key)>31:
+        root_key=root_key[0:32]
+    while len(root_key)<32:
+        root_key+="0"
+
+    obj=AES.new(root_key, AES.MODE_CBC, 'thisisaninitvect')
+    ciph1=obj.encrypt(website)
 
     m4 = SHA256.new()
     m4.update(ciph1)
