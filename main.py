@@ -4,9 +4,9 @@ from Crypto.Hash import SHA256
 
 # input data
 
-name="name"
-masterkey="masterkey"
-website="website"
+name="Paul Gabriel Lundwall"
+masterkey="sciwfpents.pynfuse"
+website="madafaka.com"
 
 
 # hash input data
@@ -95,9 +95,50 @@ def int2base(x,b,alphabet='0123456789abcdefghijklmnopqrstuvwxyz'):
 
 ciph2 = int2base(ciph2,62,alphabet='0123456789abcdefghijklmnopqrstuvwxyz')
 
+print ciph2
+
+
+# check to see if cipher2's sequences contains at least one number, one upper-case letter, and one lower-case letter, and choose the correct interval
+
+digit = 0
+upper = 0
+lower = 0
+
+def Works (string, constant):
+    digit = 0
+    upper = 0
+    lower = 0
+    for i in range (0,12):
+        character = string[i+constant*12:i+constant*12+1]
+        if character.isdigit():
+            digit = 1
+        elif character.isupper():
+            upper = 1
+        elif character.islower():
+            lower = 1
+    if digit == 1 and upper == 1 and lower == 1:
+        return True
+    else:
+        return False
+
+for i in range (0,6):
+    if Works (ciph2,i):
+        c = i*12
+        print i
+        break
+    elif i == 5:
+        c=0
+        if digit == 0:
+            ciph2 = ciph2[0:2]+"0"+ciph2[3:12]
+        if upper == 0:
+            ciph2 = "P"+ciph2[1:12]
+        if lower == 0:
+            ciph2 = ciph2[0:1]+"w"+ciph2[2:12]
+        break
+
 
 # use the following password format: xxx-xxx-xxx-xxx, where x is a base 62 caracter, from the start of ciph2
 
-password = ciph2[0:3]+"-"+ciph2[3:6]+"-"+ciph2[6:9]+"-"+ciph2[9:12]
+password = ciph2[0+c:3+c]+"-"+ciph2[3+c:6+c]+"-"+ciph2[6+c:9+c]+"-"+ciph2[9+c:12+c]
 
 print password
