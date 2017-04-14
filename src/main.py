@@ -6,6 +6,18 @@ key="password"
 website="site.com"
 root_key = "00000"
 
+m1 = SHA256.new()
+m1.update(key)
+key = m1.hexdigest
+
+m2 = SHA256.new()
+m2.update(username)
+username = m2.hexdigest
+
+m3 = SHA256.new()
+m3.update(website)
+website = m3.hexdigest
+
 for i in range(0,2):
 
     while len(plain)%16 != 0:
