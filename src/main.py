@@ -23,7 +23,7 @@ for i in range(0,2):
         plain+="0"
 
     if len(key)>31:
-        key=key[0:31]
+        key=key[0:32]
     while len(key)<32:
         key+="0"
 
@@ -39,3 +39,6 @@ for i in range(0,2):
         key=ciph1
     else:
         print(ciph1)
+
+lastpassword = "P-"+ciph1[0:3]+"-"+ciph1[3:6]+"-"+ciph1[6:9]+"-"+ciph1[9:12]
+print(lastpassword)
