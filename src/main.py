@@ -1,56 +1,88 @@
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 
-plain="username"
-key="password"
-website="site.com"
-root_key = "00000"
 
-for i in range(0,2):
+# input data
 
-    while len(plain)%16 != 0:
-        plain+="0"
-
-    if len(key)>31:
-        key=key[0:32]
-    while len(key)<32:
-        key+="0"
-
-    obj1=AES.new(key, AES.MODE_CBC, 'thisisaninitvect')
-    ciph = obj1.encrypt(plain)
-
-    if i == 0:
-        root_key = ciph
+name="name"
+masterkey="masterkey"
+website="website"
 
 
-for i in range(0,2):
+# hash input data
 
-    while len(website)%16 != 0:
-        website+="0"
+m = SHA256.new()
+m.update(name)
+name=m.hexdigest()
 
-    if len(root_key)>31:
-        root_key=root_key[0:32]
-    while len(root_key)<32:
-        root_key+="0"
+m = SHA256.new()
+m.update(masterkey)
+masterkey=m.hexdigest()
 
-    obj=AES.new(root_key, AES.MODE_CBC, 'thisisaninitvect')
-    ciph1=obj.encrypt(website)
+m = SHA256.new()
+m.update(website)
+website=m.hexdigest()
 
-    m4 = SHA256.new()
-    m4.update(ciph1)
-    ciph1=m4.hexdigest()
+print name
+print masterkey
+print website
 
-    if i == 0:
-        plain=website
-        key=ciph1
-    #else:
-    #    print(ciph1)
 
-lasthexpassword = "P-"+ciph1[0:3]+"-"+ciph1[3:6]+"-"+ciph1[6:9]+"-"+ciph1[9:12]
-#print(lasthexpassword)
+# fix input data hash length (multiple of 16 for plaintext, 32 for key), by adding "0" or truncating
 
-decimalpass = int(ciph1, 16)
-#print(decimalpass)
+while len(name)%16 != 0:
+    name+="0"
+
+if len(masterkey)>31:
+    masterkey=masterkey[0:32]
+
+while len(masterkey)<32:
+    masterkey+="0"
+
+print name
+print masterkey
+
+
+# encrypt plain with key and a constant IV ("thisisaninitvect"), then hash ciph1
+
+obj1=AES.new(masterkey, AES.MODE_CBC, 'thisisaninitvect')
+ciph1 = obj1.encrypt(name)
+
+m = SHA256.new()
+m.update(ciph1)
+ciph1=m.hexdigest()
+
+
+# fix hash length (multiple of 16 for plaintext, exactly 32 for key), by adding "0" or truncating
+
+while len(website)%16 != 0:
+    website+="0"
+
+if len(ciph1)>31:
+    ciph1=ciph1[0:32]
+
+while len(ciph1)<32:
+    ciph1+="0"
+
+print website
+print ciph1
+
+
+# encrypt website with ciph1 and a constant IV ("thisisaninitvect"), then hash ciph2
+
+obj=AES.new(ciph1, AES.MODE_CBC, 'thisisaninitvect')
+ciph2=obj.encrypt(website)
+
+m = SHA256.new()
+m.update(ciph2)
+ciph2=m.hexdigest()
+
+print ciph2
+
+
+# convert ciph2 from hexadecimal to decimal, then from decimal to base62 (def from Stack Overflow, credit to Mark Borgerding)
+
+ciph2 = int(ciph2, 16)
 
 def int2base(x,b,alphabet='0123456789abcdefghijklmnopqrstuvwxyz'):
     'convert an integer to its string representation in a given base'
@@ -73,8 +105,8 @@ def int2base(x,b,alphabet='0123456789abcdefghijklmnopqrstuvwxyz'):
         rets = alphabet[idx] + rets
     return rets
 
-base62pass = int2base(decimalpass,62,alphabet='0123456789abcdefghijklmnopqrstuvwxyz')
-#print(base64pass)
+ciph2 = int2base(ciph2,62,alphabet='0123456789abcdefghijklmnopqrstuvwxyz')
+print ciph2
 
-lastb62password = base62pass[0:3]+"-"+base62pass[3:6]+"-"+base62pass[6:9]+"-"+base62pass[9:12]
-print(lastb62password)
+password = ciph2[0:3]+"-"+ciph2[3:6]+"-"+ciph2[6:9]+"-"+ciph2[9:12]
+print(password)
