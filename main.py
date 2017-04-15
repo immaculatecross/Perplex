@@ -29,12 +29,12 @@ def int2base(x,b,alphabet='0123456789abcdefghijklmnopqrstuvwxyz'):
 
 # check to see if cipher2's sequences contains at least one number, one upper-case letter, and one lower-case letter
 
-def Works (string, constant):
+def Works (string):
     digit = 0
     upper = 0
     lower = 0
     for i in range (0,12):
-        character = string[i+constant*12:i+constant*12+1]
+        character = string[i:i+1]
         if character.isdigit():
             digit = 1
         elif character.isupper():
@@ -66,20 +66,12 @@ def Password (name, masterkey, website):
     website=m.hexdigest()
 
 
-    # fix input data hash length (multiple of 16 for plaintext, 32 for key), by adding "0" or truncating
+    # fix key hash length (must be 32), moreover, plaintext must be a multiple of 16, but a SHA256 hash is always 64 character long
 
-    while len(name)%16 != 0:
-        name+="0"
-
-    if len(masterkey)>31:
-        masterkey=masterkey[0:32]
-
-    while len(masterkey)<32:
-        masterkey+="0"
+    masterkey=masterkey[0:32]
 
 
     # encrypt plain with key and a constant IV ("thisisaninitvect"), then hash ciph1
-
 
     obj1=AES.new(masterkey, AES.MODE_CBC, 'thisisaninitvect')
     ciph1 = obj1.encrypt(name)
@@ -89,16 +81,9 @@ def Password (name, masterkey, website):
     ciph1=m.hexdigest()
 
 
-    # fix hash length (multiple of 16 for plaintext, exactly 32 for key), by adding "0" or truncating
+    # fix key hash length (must be 32), moreover, plaintext must be a multiple of 16, but a SHA256 hash is always 64 character long
 
-    while len(website)%16 != 0:
-        website+="0"
-
-    if len(ciph1)>31:
-        ciph1=ciph1[0:32]
-
-    while len(ciph1)<32:
-        ciph1+="0"
+    ciph1=ciph1[0:32]
 
 
     # encrypt website with ciph1 and a constant IV ("thisisaninitvect"), then hash ciph2
@@ -118,30 +103,19 @@ def Password (name, masterkey, website):
     ciph2 = int2base(ciph2,62,alphabet='0123456789abcdefghijklmnopqrstuvwxyz')
 
 
-    # Choose the correct interval
+    # hash and convert for as long as ciph2 doesn't meet requirements
 
-    digit = 0
-    upper = 0
-    lower = 0
-
-    for i in range (0,6):
-        if Works (ciph2,i):
-            c = i*12
-            break
-        elif i == 5:
-            c=0
-            if digit == 0:
-                ciph2 = ciph2[0:2]+"0"+ciph2[3:12]
-            if upper == 0:
-                ciph2 = "P"+ciph2[1:12]
-            if lower == 0:
-                ciph2 = ciph2[0:1]+"w"+ciph2[2:12]
-            break
+    while Works(ciph2) == False:
+        m = SHA256.new()
+        m.update(ciph2)
+        ciph2=m.hexdigest()
+        ciph2 = int(ciph2, 16)
+        ciph2 = int2base(ciph2,62,alphabet='0123456789abcdefghijklmnopqrstuvwxyz')
 
 
     # use the following password format: xxx-xxx-xxx-xxx, where x is a base 62 caracter, from the start of ciph2
 
-    password = ciph2[0+c:3+c]+"-"+ciph2[3+c:6+c]+"-"+ciph2[6+c:9+c]+"-"+ciph2[9+c:12+c]
+    password = ciph2[0:3]+"-"+ciph2[3:6]+"-"+ciph2[6:9]+"-"+ciph2[9:12]
 
     return password
 
