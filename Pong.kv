@@ -1,0 +1,47 @@
+#:kivy 1.0.9
+
+
+<PongGame>:
+    canvas:
+
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'test.png'
+
+    Label:
+        id:password_display
+        font_size: 30
+        center: root.width / 2, root.height /1.25
+        top: root.top - 50
+        text: "Generated password"
+
+    TextInput:
+        id: name
+        center: root.width / 5, root.height/4
+        top: root.top - 50
+        multiline: False
+        size: 240, 30
+        hint_text: "Full Name"
+
+    TextInput:
+        id: master_key
+        center: root.width / 2, root.height/4
+        top: root.top - 50
+        multiline: False
+        size: 240, 30
+        hint_text: "Master Key"
+        password: True
+
+    TextInput:
+        id: site
+        center: root.width / 1.25, root.height/4
+        top: root.top - 50
+        multiline: False
+        size: 240, 30
+        hint_text: "Site Name"
+    Button:
+        center: root.width / 2, root.height/8
+        size: 120, 30
+        text: 'Calcualate'
+        on_press: test
