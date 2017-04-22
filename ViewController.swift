@@ -73,9 +73,27 @@ extension String {
 
 class ViewController: NSViewController {
     
+    @IBOutlet weak var FullName: NSTextField!
+    @IBOutlet weak var MasterKey: NSSecureTextField!
+    @IBOutlet weak var ServiceName: NSTextField!
+    @IBOutlet weak var PasswordLabel: NSTextField!
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+
+
+    @IBAction func Button(_ sender: NSButton) {
+        
+        if(FullName.stringValue != "" || MasterKey.stringValue != "" || ServiceName.stringValue != "")
+        {
+            PasswordLabel.stringValue = ""
+            let pasteBoard = NSPasteboard.general()
+            
+            pasteBoard.clearContents()
+            
+        }
+        
+        if(FullName.stringValue != "" && MasterKey.stringValue != "" && ServiceName.stringValue != "")
+        {
+        
         
         
         // check to see if a string's sequence contains at least one number, one upper-case letter, and one lower-case letter
@@ -99,7 +117,7 @@ class ViewController: NSViewController {
         
         
         // return the password from the fullname, the masterkey and the website
-
+        
         func Password (fullname: String, masterkey: String, website: String) -> String {
             
             // combine input data into one string
@@ -138,7 +156,19 @@ class ViewController: NSViewController {
             
         }
         
-        print (Password (fullname: "Marc Lundwall", masterkey: "thequieteryoubecome", website: "hellomotherfucker"))
+        PasswordLabel.stringValue = Password (fullname: FullName.stringValue , masterkey: MasterKey.stringValue, website: ServiceName.stringValue)
+        let pasteBoard = NSPasteboard.general()
+        
+        pasteBoard.clearContents()
+        pasteBoard.writeObjects([PasswordLabel.stringValue as NSPasteboardWriting])
+    
+    }
+        
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.preferredContentSize = NSMakeSize(self.view.frame.size.width, self.view.frame.size.height)
         
         // Do any additional setup after loading the view.
     }
