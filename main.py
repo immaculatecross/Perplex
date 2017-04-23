@@ -13,6 +13,7 @@ def Encrypt (string):
     # remove unwanted characters
     string = string.replace("+", "")
     string = string.replace("/", "")
+    string = string.replace("=", "")
     return string
 
 # check to see if cipher2's sequences contains at least one number, one upper-case letter, and one lower-case letter
@@ -34,9 +35,9 @@ def Works (string):
         return False
 
 # return the password from the name, the masterkey and the website
-def Password (name, masterkey, website):
+def Password (masterkey, website):
     # combine input data into ciph
-    ciph = name + masterkey + website
+    ciph = masterkey + website
     # encrypt with SHA-256, turn into base 64, and remove unwanted characters
     ciph = Encrypt (ciph)
     # hash and convert for as long as ciph doesn't meet requirements
@@ -47,9 +48,8 @@ def Password (name, masterkey, website):
     return password
 
 # input data
-name= raw_input ('Enter your full name: ')
 masterkey= getpass.getpass ('Enter your master key: ')
 # infinite loop to prompt for website
 while True:
     website= raw_input ('Enter the service domain name: ')
-    print "Your password is:", Password (name, masterkey, website)
+    print "Your password is:", Password (masterkey, website)
